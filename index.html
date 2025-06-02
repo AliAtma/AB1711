@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sana Özel Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-family: sans-serif;
+      background-color: #f7baed;
+    }
+    img {
+      max-width: 300px;
+      max-height: 300px;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .buttons {
+      display: flex;
+      gap: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    button.evet {
+        background-color: #4CAF50; /* yeşil */
+        color: white;
+        border: none;
+        border-radius: 6px;
+    }
+
+    button.hayir {
+        background-color: #f44336; /* kırmızı */
+        color: white;
+        border: none;
+        border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+    <img id="gif" src="https://media.tenor.com/ySAGt5p_dEAAAAAi/thank-you.gif" alt="gif">
+    <div class="question" id="question">Sınavın Güzel Geçti mi?</div>
+    <div class="buttons">
+        <button class="evet" onclick="nextQuestion('evet')">Evet</button>
+        <button class="hayir" onclick="nextQuestion('hayir')">Hayır</button>
+    </div>
+
+  <script>
+    const data = [
+      {
+        gif: "https://media.tenor.com/ySAGt5p_dEAAAAAi/thank-you.gif",
+        question: "Sınavın Güzel Geçti mi",
+        next: { evet: 1, hayir: 2 }
+      },
+      {
+        gif: "https://media.tenor.com/SrvqhxeGuYkAAAAi/peachy-celebrate.gif",
+        question: "Sevindim sana güveniyordum, bugün boş musun?",
+        next: { evet: 3, hayir: 4 }
+      },
+      {
+        gif: "https://media1.tenor.com/m/UIOgr3Zw97sAAAAC/cute.gif",
+        question: "Merak etme sonuç seni üzmeyecek bugünü değerlendirmek ister misin?",
+        next: { evet: 3, hayir: 4 }
+      },
+      {
+        gif: "https://media.tenor.com/Vya70Sb84voAAAAi/mochi-mochi-peach-cat-gif-hug.gif",
+        question: "Karşıya bak, seni özledim :)",
+        next: null
+      }
+    ];
+
+let currentIndex = 0;
+  let hayirZorlaEvet = false;
+
+  function nextQuestion(choice) {
+    const current = data[currentIndex];
+
+    const evetBtn = document.querySelector(".buttons button:nth-child(1)");
+    const hayirBtn = document.querySelector(".buttons button:nth-child(2)");
+
+    // Bu özel sorularda hayır'a tıklanırsa, sayfa değişmeyecek ama hayır evete dönüşecek
+    if ((currentIndex === 1 || currentIndex === 2) && choice === "hayir" && !hayirZorlaEvet) {
+      // Hayır'a bastı → cevap reddedildi
+      hayirBtn.innerText = "Evet";
+      hayirBtn.onclick = () => nextQuestion("evet");
+      hayirZorlaEvet = true;
+      return; // sayfa değişmiyor!
+    }
+
+    // normal akış
+    const nextIndex = current.next?.[choice];
+    if (nextIndex != null) {
+      const next = data[nextIndex];
+      document.getElementById("gif").src = next.gif;
+      document.getElementById("question").innerText = next.question;
+      currentIndex = nextIndex;
+
+      // Buton metin ve işlevlerini sıfırla
+      evetBtn.innerText = "Evet";
+      evetBtn.onclick = () => nextQuestion("evet");
+
+      hayirBtn.innerText = "Hayır";
+      hayirBtn.onclick = () => nextQuestion("hayir");
+      hayirZorlaEvet = false;
+
+      // Son soruya geldiysek butonları gizle
+      if (!next.next) {
+        document.querySelector(".buttons").style.display = "none";
+      }
+    }
+  }
+
+  function nextQuestion(choice) {
+  const current = data[currentIndex];
+
+  const evetBtn = document.querySelector(".buttons button:nth-child(1)");
+  const hayirBtn = document.querySelector(".buttons button:nth-child(2)");
+
+  // Eğer özel sorularda hayır'a basıldıysa
+  if ((currentIndex === 1 || currentIndex === 2) && choice === "hayir" && !hayirZorlaEvet) {
+    hayirBtn.innerText = "Evet";
+    hayirBtn.onclick = () => nextQuestion("evet");
+
+    // Sınıfı da güncelle → yeşil yap
+    hayirBtn.classList.remove("hayir");
+    hayirBtn.classList.add("evet");
+
+    hayirZorlaEvet = true;
+    return;
+  }
+
+  const nextIndex = current.next?.[choice];
+  if (nextIndex != null) {
+    const next = data[nextIndex];
+    document.getElementById("gif").src = next.gif;
+    document.getElementById("question").innerText = next.question;
+    currentIndex = nextIndex;
+
+    // Butonları sıfırla
+    evetBtn.innerText = "Evet";
+    evetBtn.onclick = () => nextQuestion("evet");
+    evetBtn.className = "evet";
+
+    hayirBtn.innerText = "Hayır";
+    hayirBtn.onclick = () => nextQuestion("hayir");
+    hayirBtn.className = "hayir";
+
+    hayirZorlaEvet = false;
+
+    if (!next.next) {
+      document.querySelector(".buttons").style.display = "none";
+    }
+  }
+}
+  </script>
+
+</body>
+</html>
